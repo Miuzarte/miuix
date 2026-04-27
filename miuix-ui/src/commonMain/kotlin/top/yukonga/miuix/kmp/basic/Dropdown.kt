@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -232,14 +233,14 @@ data class DropdownColors(
     val selectedContainerColor: Color,
 )
 
-@Immutable
+@Stable
 data class DropdownEntry(
     val items: List<DropdownItem>,
     val selectedIndex: Int? = null,
     val onSelectedIndexChange: ((Int) -> Unit)? = null,
 )
 
-@Immutable
+@Stable
 data class DropdownItem(
     val text: String,
     val enabled: Boolean = true,

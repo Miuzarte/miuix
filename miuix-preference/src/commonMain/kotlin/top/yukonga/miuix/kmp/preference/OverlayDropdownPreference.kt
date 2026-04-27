@@ -324,8 +324,9 @@ fun OverlayDropdownPreference(
         }
     }
 
-    val entriesNotEmpty = entries.isNotEmpty() && entries.any { it.items.isNotEmpty() }
-    val actualEnabled = enabled && entriesNotEmpty
+    val nonEmptyEntries = entries.filter { it.items.isNotEmpty() }
+    val hasEntries = nonEmptyEntries.isNotEmpty()
+    val actualEnabled = enabled && hasEntries
 
     val actionColor = if (actualEnabled) {
         MiuixTheme.colorScheme.onSurfaceVariantActions
@@ -355,10 +356,12 @@ fun OverlayDropdownPreference(
         summaryColor = summaryColor,
         startAction = startAction,
         endActions = {
-            val selectedValueText = entries.joinToString("\n") { group ->
-                group.selectedIndex?.let { index -> group.items.getOrNull(index)?.text } ?: ""
-            }.ifBlank { null }
-            if (showValue && entriesNotEmpty && !selectedValueText.isNullOrBlank()) {
+            val selectedValueText = nonEmptyEntries
+                .mapNotNull { group -> group.selectedIndex?.let { idx -> group.items.getOrNull(idx)?.text } }
+                .filter { it.isNotBlank() }
+                .joinToString("\n")
+                .ifBlank { null }
+            if (showValue && hasEntries && !selectedValueText.isNullOrBlank()) {
                 Text(
                     text = selectedValueText,
                     modifier = Modifier.padding(end = 8.dp),
@@ -371,9 +374,9 @@ fun OverlayDropdownPreference(
             DropdownArrowEndAction(
                 actionColor = actionColor,
             )
-            if (entriesNotEmpty) {
+            if (hasEntries) {
                 OverlayDropdownPreferencePopup(
-                    entries = entries,
+                    entries = nonEmptyEntries,
                     isDropdownExpanded = isDropdownExpanded.value,
                     onDismiss = { setExpanded(false) },
                     onDismissFinished = { isHoldDown.value = false },
